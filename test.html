@@ -5,7 +5,7 @@
 <h1>Javascript Test</h1>
 
 <div class='centerbox'><canvas></canvas></div>
-/*
+
 <script>
   var canvas = document.getElementsByTagName('canvas')[0];
   canvas.width = 1024;
@@ -15,6 +15,7 @@
   var image = ctx.createImageData(canvas.width, canvas.height);
   var data = image.data;
 
+ 
 function drawFrame() {
   var cWidth = canvas.width;
   var cHeight = canvas.height;
@@ -26,7 +27,7 @@ function drawFrame() {
       //data[cell] += Math.max(0, (25 - value) * 8);
       data[cell + 3] = 255; // alpha.
     }
-
+  }
 
 
 }
@@ -34,6 +35,6 @@ function drawFrame() {
   
   
 </script>
-*/
+
 </body>
 </html>
