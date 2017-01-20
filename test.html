@@ -2,15 +2,37 @@
 <html>
 <body>
 
-<h1>The + Operator</h1>
+<h1>Javascript Test</h1>
 
-<p id="demo"></p>
+<div class='centerbox'><canvas></canvas></div>
 
 <script>
-var x = 5;
-var y = 2;
-var z = x + y;
-document.getElementById("demo").innerHTML = z;
+  var canvas = document.getElementsByTagName('canvas')[0];
+  canvas.width = 1024;
+  canvas.height = 768;
+  
+  var ctx = canvas.getContext('2d');
+  var image = ctx.createImageData(canvas.width, canvas.height);
+  var data = image.data;
+
+function drawFrame() {
+  var cWidth = canvas.width;
+  var cHeight = canvas.height;
+  for (var x = 0; x < cWidth; x++) {
+    for (var y = 0; y < cHeight; y++) {
+      var cell = (x + y * cWidth) * 4;
+      var value = 128;
+      data[cell] = data[cell + 1] = data[cell + 2] = value;
+      //data[cell] += Math.max(0, (25 - value) * 8);
+      data[cell + 3] = 255; // alpha.
+    }
+
+
+
+}
+  
+  
+  
 </script>
 
 </body>
