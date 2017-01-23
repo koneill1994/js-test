@@ -38,13 +38,15 @@
   var ypos=0;
   var t=0;
   
+  var starFieldSize=3; //number of widths/heights it covers
+  
   var numStars=4000;
   var stars=[];
   
   for(i=0; i<numStars; i++){
     var star = {
-      x: Math.floor((Math.random() * canvas.width*3) - 1.5*canvas.width + 1), 
-      y: Math.floor((Math.random() * canvas.height*3) - 1.5*canvas.height + 1),
+      x: Math.floor((Math.random() * canvas.width*starFieldSize) - starFieldSize/2*canvas.width + 1), 
+      y: Math.floor((Math.random() * canvas.height*starFieldSize) - starFieldSize/2*canvas.height + 1),
       z: Math.floor((Math.random() * 10))
       
     };
@@ -82,6 +84,11 @@
     }
   }
   setInterval(draw,30)
+    
+    //to do
+    // maybe make random constellations
+    //when you hover over them lines fade in between them
+    
     
   </script>
   
