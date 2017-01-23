@@ -44,6 +44,10 @@
   var quasarFreqs=150;
   var hoverdist=50;
   
+  var fontSize=20;
+  
+  var ms_frame_delay=30;
+  
   for(i=0; i<numStars; i++){
     var star = {
       x: Math.floor((Math.random() * canvas.width*starFieldSize) - starFieldSize/2*canvas.width + 1), 
@@ -166,21 +170,33 @@
         ctx.beginPath();
         ctx.arc(closest_coords.screenx+closest_coords.screenr/2, closest_coords.screeny+closest_coords.screenr/2, closest_star.size*10, 0, 2 * Math.PI, false);
         ctx.stroke();
+        
+        //make text
+        var starText="Class:     "+closest_star.type+"\n"+
+                     "Distance:  "+closest_star.z + " light years \n"+
+                     "Size:      "+closest_star.size + " solar masses \n";
+        if(closest_star.freq>0){
+          starText +="Frequency: "+1/(ms_frame_delay*closest_star.freq/1000)+" 1/s \n";
+        }
+        
         //write text
         ctx.fillStyle='#f2ff00';
-        ctx.fillText(closest_star.type,15,15);
+        ctx.font = fontSize+'px Arial';
+        ctx.fillText(starText,30,30);
       }
+      
       //thingie around cursor
-      ctx.strokeStyle="#ffffff"
+      ctx.strokeStyle="#ffffff";
       ctx.beginPath();
-      ctx.arc(posx, posy, 500, 0, 2 * Math.PI, false);
+      ctx.arc(xpos, ypos, hoverdist, 0, 2 * Math.PI, false);
+      //console.log(posx)
       ctx.stroke();
       
       //iterate time
       t++;
     }
   }
-  setInterval(draw,30)
+  setInterval(draw,ms_frame_delay)
     
     //to do
     // maybe make random constellations
