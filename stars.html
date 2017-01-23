@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  
+  
+  <head>
+ <meta charset="utf-8"/>
+ 
+     <title>Stars</title>
+ 
+<body>
+  
+  <h1>Stars</h1>
+  
+  <canvas id="stars" width="1280" height="720"></canvas>
+  
+  
+  </body>
+  
+  <style type="text/css">
+      canvas { 
+        border: 1px solid black; 
+        padding-left: 0;
+        padding-right: 0;
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+        }
+    </style>
+
+  
+  <script>
+  
+  var canvas = document.getElementById('stars');
+  
+  var x,y,radius;
+  
+  var xpos=0;
+  var ypos=0;
+  var t=0;
+  
+  var numStars=4000;
+  var stars=[];
+  
+  for(i=0; i<numStars; i++){
+    var star = {
+      x: Math.floor((Math.random() * canvas.width*3) - 1.5*canvas.width + 1), 
+      y: Math.floor((Math.random() * canvas.height*3) - 1.5*canvas.height + 1),
+      z: Math.floor((Math.random() * 10))
+      
+    };
+    stars.push(star);
+  }
+  
+  function mouse_position(event){
+    xpos = event.clientX;     // Get the horizontal coordinate
+    ypos = event.clientY;     // Get the vertical coordinate
+  }
+
+  
+  function draw(){
+    if (canvas.getContext){
+      var ctx = canvas.getContext('2d');
+      
+      ctx.fillStyle='#000000';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      ctx.fillStyle='#ffffff';
+      for(i=0;i<stars.length;i++){
+        
+        x=stars[i].x+(xpos-canvas.width/2)*stars[i].z;
+        y=stars[i].y+(ypos-canvas.height/2)*stars[i].z;
+        radius=Math.ceil(stars[i].z/2);
+        
+        if(x>0 && x<canvas.width && y>0 && y<canvas.width){
+          ctx.fillRect(x,y,radius,radius);
+        }
+        
+      }
+      
+      
+      t++;
+    }
+  }
+  setInterval(draw,30)
+    
+  </script>
+  
+  
+  <body onmousemove="mouse_position(event)"></body>
+   <body onload="draw();"></body>
+  
+  
+  
+  
+  
+  
+  
+
+</html>
