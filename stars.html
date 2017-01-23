@@ -9,8 +9,6 @@
  
 <body>
   
-  <h1>Stars</h1>
-  
   <canvas id="stars" width="1280" height="720"></canvas>
   
   
@@ -40,18 +38,21 @@
   
   var starFieldSize=3; //number of widths/heights it covers
   
-  var numStars=500;
+  var numStars=2000;
   var stars=[];
   var types = starTypes();
+  var quasarFreqs=150;
+  var hoverdist=50;
   
   for(i=0; i<numStars; i++){
     var star = {
       x: Math.floor((Math.random() * canvas.width*starFieldSize) - starFieldSize/2*canvas.width + 1), 
       y: Math.floor((Math.random() * canvas.height*starFieldSize) - starFieldSize/2*canvas.height + 1),
-      z: Math.floor((Math.random() * 10)),
+      z: Math.floor((Math.random() * 100)/10),
       color: '#888888',
       type: "",
-      size: 1
+      size: 1,
+      freq: 0
     };
     //generate type of star
     setStarType(star,types[Math.floor((Math.random() * types.length))]);
@@ -61,53 +62,114 @@
   function setStarType(star,type){
     star.color=type.color;
     star.type=type.name;
-    star.size=type.size;    
+    star.size=type.size;
+    if(type.freq == "y"){
+      star.freq=Math.floor(Math.random()*quasarFreqs);
+    }    
   }
   
   function starTypes(){
     var types=[];
-    var names=["main sequence","red giant","yellow dwarf","blue dwarf"];
-    var colors=["#ffffff","#ff2419","#fffb19","#c1eeff"];
-    var sizes=[1,2,1,1];
+    var names=["main sequence","red giant","yellow dwarf","blue dwarf","quasar"];
+    var colors=["#ffffff","#ffcccc","#feffcc","#c1eeff","f2f7ff"];
+    var sizes=[1,1.2,1,.8,.6];
+    var freqs=["n","n","n","n","y"];
     for(i=0;i<names.length;i++){
       var t = {
         name: names[i],
         color: colors[i],
-        size: sizes[i]
+        size: sizes[i],
+        freq: freqs[i]
       };
       types.push(t);
     }
     return types;
   }
   
+  function sqrDist(x,y,i,j){
+    return Math.pow(x-i,2)+Math.pow(y-j,2);
+  }
+  
+  
   function mouse_position(event){
-    xpos = event.clientX;     // Get the horizontal coordinate
-    ypos = event.clientY;     // Get the vertical coordinate
+    var rect = canvas.getBoundingClientRect();
+
+    xpos = event.clientX - rect.left;     // Get the horizontal coordinate
+    ypos = event.clientY - rect.top;     // Get the vertical coordinate
   }
 
+  function screen_coords(star){
+    sx=(star.x+(xpos-canvas.width/2)*star.z);
+    sy=(star.y+(ypos-canvas.height/2)*star.z);
+    sr=Math.ceil(star.size*star.z/2);
+
+    var coords = {screenx: sx, screeny: sy, screenr: sr};
+    return coords;
+  }  
   
   function draw(){
     if (canvas.getContext){
       var ctx = canvas.getContext('2d');
       
+      var starsCloseToCursor=[];
       ctx.fillStyle='#000000';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       
       ctx.fillStyle='#ffffff';
+      
+      //go through all the stars
       for(i=0;i<stars.length;i++){
         
+        //get params to render the star
         x=(stars[i].x+(xpos-canvas.width/2)*stars[i].z);
         y=(stars[i].y+(ypos-canvas.height/2)*stars[i].z);
         radius=Math.ceil(stars[i].size*stars[i].z/2);
         
-        if(x>0 && x<canvas.width && y>0 && y<canvas.width){
-          ctx.fillStyle = stars[i].color;
-          ctx.fillRect(x,y,radius,radius);
+        // keep track of the stars closer to the cursor that hoverdist
+        if(sqrDist(x,y,xpos,ypos)<Math.pow(hoverdist,2)){
+          //console.log(sqrDist(x,y,xpos,ypos))
+          starsCloseToCursor.push(stars[i]);
         }
         
+        // render the star
+        if(x>0 && x<canvas.width && y>0 && y<canvas.width){
+          if(stars[i].freq>0){
+            if(t%stars[i].freq==0){
+              ctx.fillStyle = stars[i].color;
+              ctx.fillRect(x,y,radius,radius);
+            }
+          }
+          else{
+            ctx.fillStyle = stars[i].color;
+            ctx.fillRect(x,y,radius,radius);
+          }
+        }
       }
+      //end stars
       
-      
+      //find closest star
+      if(starsCloseToCursor.length>0){
+        var closest=Math.max(canvas.height,canvas.width)*starFieldSize;
+        var closest_star=starsCloseToCursor[0];
+        var closest_coords = screen_coords(starsCloseToCursor[0]);
+        for(var i; i<starsCloseToCursor.length; i++){
+          var coords = screen_coords(starsCloseToCursor[i]);
+          if(starsCloseToCursor[i]<closest){
+            closest=Math.sqrt(MathsqrDist(coords.screenx,coords.screeny,
+                                          posx,posy));
+            closest_star=starsCloseToCursor[i];
+            closest_coords=coords;
+          }
+        }
+        // draw highlight indicator
+        ctx.strokeStyle="#ffffff"
+        ctx.beginPath();
+        ctx.arc(closest_coords.screenx+closest_coords.screenr/2, closest_coords.screeny+closest_coords.screenr/2, closest_star.size*10, 0, 2 * Math.PI, false);
+        ctx.stroke();
+        //write text
+        ctx.fillStyle='#f2ff00';
+        ctx.fillText(closest_star.type,15,15);
+      }
       t++;
     }
   }
