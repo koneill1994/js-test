@@ -170,6 +170,13 @@
         ctx.fillStyle='#f2ff00';
         ctx.fillText(closest_star.type,15,15);
       }
+      //thingie around cursor
+      ctx.strokeStyle="#ffffff"
+      ctx.beginPath();
+      ctx.arc(posx, posy, 500, 0, 2 * Math.PI, false);
+      ctx.stroke();
+      
+      //iterate time
       t++;
     }
   }
