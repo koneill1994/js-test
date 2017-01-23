@@ -40,17 +40,44 @@
   
   var starFieldSize=3; //number of widths/heights it covers
   
-  var numStars=4000;
+  var numStars=500;
   var stars=[];
+  var types = starTypes();
   
   for(i=0; i<numStars; i++){
     var star = {
       x: Math.floor((Math.random() * canvas.width*starFieldSize) - starFieldSize/2*canvas.width + 1), 
       y: Math.floor((Math.random() * canvas.height*starFieldSize) - starFieldSize/2*canvas.height + 1),
-      z: Math.floor((Math.random() * 10))
-      
+      z: Math.floor((Math.random() * 10)),
+      color: '#888888',
+      type: "",
+      size: 1
     };
+    //generate type of star
+    setStarType(star,types[Math.floor((Math.random() * types.length))]);
     stars.push(star);
+  }
+  
+  function setStarType(star,type){
+    star.color=type.color;
+    star.type=type.name;
+    star.size=type.size;    
+  }
+  
+  function starTypes(){
+    var types=[];
+    var names=["main sequence","red giant","yellow dwarf","blue dwarf"];
+    var colors=["#ffffff","#ff2419","#fffb19","#c1eeff"];
+    var sizes=[1,2,1,1];
+    for(i=0;i<names.length;i++){
+      var t = {
+        name: names[i],
+        color: colors[i],
+        size: sizes[i]
+      };
+      types.push(t);
+    }
+    return types;
   }
   
   function mouse_position(event){
@@ -69,11 +96,12 @@
       ctx.fillStyle='#ffffff';
       for(i=0;i<stars.length;i++){
         
-        x=stars[i].x+(xpos-canvas.width/2)*stars[i].z;
-        y=stars[i].y+(ypos-canvas.height/2)*stars[i].z;
-        radius=Math.ceil(stars[i].z/2);
+        x=(stars[i].x+(xpos-canvas.width/2)*stars[i].z);
+        y=(stars[i].y+(ypos-canvas.height/2)*stars[i].z);
+        radius=Math.ceil(stars[i].size*stars[i].z/2);
         
         if(x>0 && x<canvas.width && y>0 && y<canvas.width){
+          ctx.fillStyle = stars[i].color;
           ctx.fillRect(x,y,radius,radius);
         }
         
