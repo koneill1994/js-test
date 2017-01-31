@@ -10,7 +10,7 @@
 
 <body>
   
-   <form id="frm1">
+   <form id="frm1" onchange="submit_seed()">
   M1:
   <input type="text" name="m1">
   m2:
@@ -19,8 +19,6 @@
   <input type="text" name="x0">
   </form> 
   
-  <button onclick="submit_seed()">Try it</button>
-
   
   <canvas id="canvas" width="1280" height="720"></canvas>
   
@@ -79,6 +77,16 @@
       x_0=parseInt(f.x0.value);
     }   
     whitenoise(t) 
+  }
+  
+  function submitIfFormComplete()
+  {
+    f=document.getElementById('frm1');
+  // Check the select has something selected
+  if (f.m1.value1!="" && f.m2.value1!="" && f.x0.value1!="")
+    {
+        f.submit();
+    }
   }
   
   
