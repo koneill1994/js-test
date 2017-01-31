@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+  
+  
+  <head>
+ <meta charset="utf-8"/>
+ 
+     <title>Perlin</title>
+ 
+
+<body>
+  
+   <form id="frm1">
+  M1:
+  <input type="text" name="m1">
+  m2:
+  <input type="text" name="m2">
+  x0:
+  <input type="text" name="x0">
+  </form> 
+  
+  <button onclick="submit_seed()">Try it</button>
+
+  
+  <canvas id="canvas" width="1280" height="720"></canvas>
+  
+  
+  </body>
+  
+  <style type="text/css">
+      canvas { 
+        border: 1px solid black; 
+        padding-left: 0;
+        padding-right: 0;
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+        }
+    </style>
+
+<script>
+  
+  var canvas = document.getElementById('canvas');
+  
+  var ms_frame_delay=250;
+  
+  var t=0;
+  
+  seed=(Math.pow(2,11)-1)*(Math.pow(2,15)-1) //must always be a product of 2 primes
+  x_0=Math.pow(2,20)-1
+  
+  whitenoise(t);
+  
+  function bbs(input){ //blumblumshub rng i think mostly
+    //if(input==0) return Math.pow(x_0,2)%seed;
+    return Math.pow(x_0*input,2)%seed;    
+  }
+  
+  function whitenoise(t){
+    if (canvas.getContext){
+      var ctx = canvas.getContext('2d');
+      var id = ctx.createImageData(canvas.width, canvas.height);
+      for(var i=0; i<id.data.length; i+=4){
+        id.data[i]     = Math.ceil(255*bbs(i+t)/seed);     // red
+        id.data[i + 1] = Math.ceil(255*bbs(i+t)/seed); // green
+        id.data[i + 2] = Math.ceil(255*bbs(i+t)/seed); // blue
+        id.data[i+3]   = 255;
+      }
+      ctx.putImageData(id, 0,0);
+    }
+  }
+  
+  function submit_seed(){
+    var f = document.getElementById("frm1");
+    if(parseInt(f.m1.value)!=NaN && parseInt(f.m2.value)!=NaN){
+      seed=parseInt(f.m1.value)*parseInt(f.m2.value);
+    }
+    if(parseInt(f.x0.value)!=NaN){
+      x_0=parseInt(f.x0.value);
+    }   
+    whitenoise(t) 
+  }
+  
+  
+  function draw(){
+    if (canvas.getContext){
+      var ctx = canvas.getContext('2d');
+      //whitenoise(t);
+
+      //ctx.fillStyle="#ffffff";
+      //ctx.fillRect(0, 0, canvas.width, canvas.height);
+ 
+      //iterate time
+      t++;
+    }
+  }
+    
+  setInterval(draw,ms_frame_delay);
+
+  </script>
+  
+   <body onload="draw();"></body>
+  
+  
+  
+  
+  
+  
+  
+
+</html>
+

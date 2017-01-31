@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+  
+  
+  <head>
+ <meta charset="utf-8"/>
+ 
+     <title>Cursor Game</title>
+ 
+<body>
+  
+  <canvas id="canvas" width="1280" height="720"></canvas>
+  
+  
+  </body>
+  
+  <style type="text/css">
+      canvas { 
+        border: 1px solid black; 
+        padding-left: 0;
+        padding-right: 0;
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+        }
+    </style>
+
+
+  <script>
+  
+  var canvas = document.getElementById('canvas');
+  
+  var ms_frame_delay=15;
+  
+  var fontSize = 30;
+  
+  flash_length=10;
+  
+  //set em to the middle of the screen to start
+  xpos=canvas.width/2.0 - canvas.getBoundingClientRect().left;
+  ypos=canvas.height/2.0 - canvas.getBoundingClientRect().top;
+
+  function make_obstacle(_x,_y,_w,_h,_sx,_sy){
+    var o={
+      x:_x, //x
+      y:_y, //y
+      w:_w, //width
+      h:_h, //height
+      sx:_sx, //speed_x
+      sy:_sy, //speed_y
+    };
+    return o;
+  }
+
+  function mouse_position(event){
+    var rect = canvas.getBoundingClientRect();
+    
+    xpos = event.clientX - rect.left;     // Get the horizontal coordinate
+    ypos = event.clientY - rect.top;     // Get the vertical coordinate
+  }
+  
+  function draw_tutorial_text(ctx,t){
+    if(t<500){
+        ctx.fillStyle='#dddddd';
+        ctx.font = fontSize+'px Arial';
+        ctx.fillText("This is you",xpos,ypos+fontSize);
+    }
+    
+  }
+  
+  function hit_color(t_since,flash_length){
+    num=Math.floor(16777215-Math.min(16777215*(t_since/flash_length),16777215));
+    console.log([num,"#"+num.toString(16)+"0".repeat(6-num.toString(16).length)]);
+    return "#"+num.toString(16)+"0".repeat(6-num.toString(16).length);
+  }
+  /*
+  function flashtest(){
+    
+  }
+  */
+  var t=0;
+  var t_since_hit=0;
+  
+  
+  
+  function draw(){
+    if (canvas.getContext){
+      var ctx = canvas.getContext('2d');
+      
+      ctx.fillStyle=hit_color(t_since_hit,flash_length);
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+ 
+      //draw_tutorial_text(ctx,t);
+      
+      //iterate time
+      t++;
+      t_since_hit++;
+    }
+  }
+  setInterval(draw,ms_frame_delay)
+
+  </script>
+  
+  
+  <body onmousemove="mouse_position(event)"></body>
+   <body onload="draw();"></body>
+  
+  
+  
+  
+  
+  
+  
+
+</html>
