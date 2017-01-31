@@ -17,6 +17,8 @@
   <input type="text" name="m2">
   x0:
   <input type="text" name="x0">
+  scale:
+  <input type="text" name="scale">
   </form> 
   
   
@@ -40,28 +42,50 @@
   
   var canvas = document.getElementById('canvas');
   
-  var ms_frame_delay=250;
+  var ms_frame_delay=5000;
   
   var t=0;
   
   seed=(Math.pow(2,11)-1)*(Math.pow(2,15)-1) //must always be a product of 2 primes
   x_0=Math.pow(2,20)-1
+  var scale=1;
   
   whitenoise(t);
   
   function bbs(input){ //blumblumshub rng i think mostly
     //if(input==0) return Math.pow(x_0,2)%seed;
-    return Math.pow(x_0*input,2)%seed;    
+    return Math.pow(x_0*input/scale,2)%seed;    
   }
   
   function whitenoise(t){
     if (canvas.getContext){
       var ctx = canvas.getContext('2d');
-      var id = ctx.createImageData(canvas.width, canvas.height);
+      var id = ctx.getImageData(0,0,canvas.width, canvas.height);
       for(var i=0; i<id.data.length; i+=4){
         id.data[i]     = Math.ceil(255*bbs(i+t)/seed);     // red
         id.data[i + 1] = Math.ceil(255*bbs(i+t)/seed); // green
         id.data[i + 2] = Math.ceil(255*bbs(i+t)/seed); // blue
+        id.data[i+3]   = 255;
+      }
+      ctx.putImageData(id, 0,0);
+    }
+  }
+  
+  function whitenoise_move(t){
+    if (canvas.getContext){
+      var ctx = canvas.getContext('2d');
+      var id = ctx.getImageData(0,0,canvas.width, canvas.height);
+      //var data=new Uint8ClampedArray(length);
+      var d1= Array.from(id.data);
+      
+      //var data_tmp = Array.prototype.slice.call(id.data.slice(canvas.width*4)).concat(Array.apply(null, Array(id.data.length-canvas.width)).map(Number.prototype.valueOf,0));
+      //var data = new Uint8ClampedArray(data_tmp)
+      for(var i=0; i<id.data.length; i+=4){
+        id.data[i]     = Math.ceil(255*bbs(i+t)/seed);     // red
+        id.data[i + 1] = Math.ceil(255*bbs(i+t+1)/seed); // green
+        id.data[i + 2] = Math.ceil(255*bbs(i+t+2)/seed); // blue
+        //id.data[i + 2] = Math.ceil(255*bbs(i+t*canvas.width)/seed); // blue
+
         id.data[i+3]   = 255;
       }
       ctx.putImageData(id, 0,0);
@@ -75,26 +99,25 @@
     }
     if(parseInt(f.x0.value)!=NaN){
       x_0=parseInt(f.x0.value);
-    }   
-    whitenoise(t) 
+    }
+    if(parseInt(f.scale.value)!=NaN){
+      scale=parseInt(f.scale.value);
+    }
+    if (canvas.getContext){
+      var ctx = canvas.getContext('2d');
+      var id = ctx.createImageData(canvas.width, canvas.height);
+      ctx.putImageData(id, 0,0);
+    }
+    whitenoise_move(t);
   }
   
-  function submitIfFormComplete()
-  {
-    f=document.getElementById('frm1');
-  // Check the select has something selected
-  if (f.m1.value1!="" && f.m2.value1!="" && f.x0.value1!="")
-    {
-        f.submit();
-    }
-  }
   
   
   function draw(){
     if (canvas.getContext){
       var ctx = canvas.getContext('2d');
       //whitenoise(t);
-
+      //whitenoise_move(t);
       //ctx.fillStyle="#ffffff";
       //ctx.fillRect(0, 0, canvas.width, canvas.height);
  
